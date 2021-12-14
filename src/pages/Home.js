@@ -7,7 +7,7 @@ import {
     IonButtons,
     IonContent
 } from "@ionic/react";
-
+import Scan from "../components/Scan";
 
 
 const Home = () => {
@@ -25,6 +25,7 @@ const Home = () => {
             <IonContent fullscreen>
                 ここにQuaggajsのやつを使うのと、現在の飲酒情報を書く<br />
                 加えて、飲酒をやめるというボタンを用意し、ボタンが押されたら飲酒ログへログを追加し、ここに記載されている記録をクリアにする。
+                <Scan />
             </IonContent>
 
         </IonPage>
