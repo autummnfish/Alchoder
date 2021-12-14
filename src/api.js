@@ -2,7 +2,6 @@ export async function fetchItemInfomation(code) {
     const janCode = code;
     const response = await fetch(`/api/${janCode}`);
     const data = await response.json();
-    //data.hits[0].name
     return data;
   }
 

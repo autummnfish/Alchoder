@@ -1,4 +1,5 @@
-import { IonApp, IonRouterOutlet, IonSplitPane,setupIonicReact } from '@ionic/react';
+
+import { IonApp, IonRouterOutlet, IonSplitPane, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Redirect, Route } from 'react-router-dom';
 import Menu from './components/Menu';
@@ -39,7 +40,6 @@ const App: React.FC = () => {
               <Redirect to="/page/Home" />
             </Route>
             <Route path="/page/Home" exact={true}>
-              {/* <Page /> */}
               <Home />
             </Route>
             <Route path="/page/DrinkLog" exact={true}>
