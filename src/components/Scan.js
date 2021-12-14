@@ -161,7 +161,7 @@ const Scan = () => {
         // </div>
         <IonContent>
             <IonModal isOpen={showModal}>
-                <p>This is modal content</p>
+                <p>カメラを配置したい</p>
                 <IonButton onClick={() => setShowModal(false)}>Close Modal</IonButton>
                 {/* ここにカメラを用意する 、というかモーダル内部で表示する方法が公式のチュートリアルでありそう*/}
             </IonModal>
