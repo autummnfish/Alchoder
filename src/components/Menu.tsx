@@ -11,7 +11,7 @@ import {
 } from '@ionic/react';
 
 import { useLocation } from 'react-router-dom';
-import {   bookmarkOutline, informationCircleOutline, beerOutline, beerSharp, receiptOutline, informationCircleSharp, receiptSharp} from 'ionicons/icons';
+import { informationCircleOutline, beerOutline, beerSharp, receiptOutline, informationCircleSharp, receiptSharp} from 'ionicons/icons';
 import './Menu.css';
 
 interface AppPage {

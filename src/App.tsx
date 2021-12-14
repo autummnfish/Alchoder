@@ -39,7 +39,6 @@ const App: React.FC = () => {
               <Redirect to="/page/Home" />
             </Route>
             <Route path="/page/Home" exact={true}>
-              {/* <Page /> */}
               <Home />
             </Route>
             <Route path="/page/DrinkLog" exact={true}>
