@@ -8,7 +8,7 @@ import {
     IonContent
 } from "@ionic/react";
 
-import Quagga from 'quagga';
+
 
 const Home = () => {
     const title = "お酒を登録する"
