@@ -1,0 +1,1 @@
+import Quagga from 'quagga';
