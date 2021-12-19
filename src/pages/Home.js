@@ -18,7 +18,11 @@ import {useState} from "react";
 
 const Home = () => {
   const title = "お酒を登録する";
+  
   const [showModal, setShowModal] = useState(false);
+  const closeModal = (bool) =>{
+    setShowModal(bool);
+  }
   return (
     <IonPage>
       <IonHeader>
@@ -30,18 +34,19 @@ const Home = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonModal isOpen={showModal} onDidDismiss={() => setShowModal(false)}>
+        <IonModal isOpen={showModal} onDidDismiss={() => closeModal(false)}>
           <IonHeader translucent>
             <IonToolbar>
               <IonTitle>バーコードを読み取る</IonTitle>
               <IonButtons slot="end">
-                <IonButton onclick={() => setShowModal(false)}>
+                <IonButton onclick={() => closeModal(false)}>
                   Close
                 </IonButton>
               </IonButtons>
             </IonToolbar>
           </IonHeader>
-          ここにカメラを用意する 、というかモーダル内部で表示する方法が公式のチュートリアルでありそう
+          {/* ここにカメラを用意する 、というかモーダル内部で表示する方法が公式のチュートリアルでありそう */}
+          <Scan />
         </IonModal>
         ここにQuaggajsのやつを使うのと、現在の飲酒情報を書く
         <br />
@@ -59,7 +64,7 @@ const Home = () => {
         <br />
         カメラの許可がされなかった場合、Alertを表示する。
         <br />
-        {/* <Scan /> */}
+        
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
           <IonFabButton onClick={() => setShowModal(true)}>
             <IonIcon icon={cameraOutline} />
