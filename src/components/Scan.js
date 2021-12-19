@@ -65,7 +65,7 @@ const Scan = (props) => {
   useEffect(() => {
     Quagga.onDetected((result) => {
       //誤認識を防ぐために複数回バーコードが一致する場合としてもよさそう
-      if (result !== undefined) {
+      if (result != null) {
         setTimeout(reloadItemName(result.codeResult.code), 1000);
         setBarcode(result.codeResult.code);
       }
@@ -79,7 +79,6 @@ const Scan = (props) => {
   }, []);
 
   const stopCamera = (event) => {
-    console.log(window.innerWidth);
     event.preventDefault();
     Quagga.stop();
   };
