@@ -1,35 +1,27 @@
-import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonMenuButton,
-  IonButton,
-  IonContent,
-  IonModal,
-  IonFab,
-  IonFabButton,
-  IonIcon,
-} from "@ionic/react";
+import { useIonAlert, IonButton } from "@ionic/react";
 import Quagga from "quagga";
 import { useState, useEffect } from "react";
 import { fetchItemInfomation } from "../api";
 
 const Scan = (props) => {
-  const handleSubmit = (value, event) => {
-    event.preventDefault();
-    const janCode = value;
-    props.onFormSubmit(janCode);
-  };
+  // const handleSubmit = (value, event) => {
+  //   event.preventDefault();
+  //   const janCode = value;
+  //   props.onFormSubmit(janCode);
+  // };
   const [barcode, setBarcode] = useState("4901411086798"); //このjanコードはダミーデータのようなもの
   const [rawItemName, setRawItemName] = useState("");
+  const [present] = useIonAlert();
 
   const reloadItemName = (code) => {
     fetchItemInfomation(code).then((name) => {
-      setRawItemName(name);
+      if (name !== "" && name != null) {
+        setRawItemName(name);
+      }
     });
   };
   const cameraSize = Math.min(window.innerHeight, window.innerWidth);
+  const webWorker = Math.min(navigator.hardwareConcurrency , 4)
   const config = {
     //カメラ設定
     inputStream: {
@@ -54,10 +46,9 @@ const Scan = (props) => {
       readers: ["ean_reader"],
       multiple: false,
     },
-    //TODO: areaを指定し、カメラがバーコードを読み取れる領域を指定する。できれば線で囲いたい(cannbass要素？)
 
     //使用可能なWebワーカー数の指定
-    numOfWorkers: navigator.hardwareConcurrency || 4,
+    numOfWorkers: webWorker,
 
     locate: true,
   };
@@ -72,20 +63,8 @@ const Scan = (props) => {
     });
   }, []);
 
-  useEffect(() => {
-    fetchItemInfomation("").then((name) => {
-      setRawItemName(name);
-    });
-  }, []);
-
-  const stopCamera = (event) => {
-    event.preventDefault();
-    Quagga.stop();
-  };
-
   const startCamera = (event) => {
     event.preventDefault();
-
     onChangeQuaggaCamera(config);
   };
   const onChangeQuaggaCamera = (config) => {
@@ -98,22 +77,39 @@ const Scan = (props) => {
     });
   };
 
+  const stopCamera = (event) =>{
+    event.preventDefault();
+    Quagga.stop();
+  }
+
   return (
     <div>
-      <div>
+      {/* <div>
         {barcode !== ""
           ? `バーコード : ${barcode}`
           : "バーコードを読み取っています..."}
-      </div>
-      <form onSubmit={(e) => handleSubmit(rawItemName, e)}>
-        <button type="submit">get yahoo api</button>
+      </div> */}
+      <form onSubmit={(e) => startCamera(e)}>
+        <button>camera on</button>
       </form>
       <form onSubmit={(e) => stopCamera(e)}>
         <button>camera stop</button>
       </form>
-      <form onSubmit={(e) => startCamera(e)}>
-        <button>camera on</button>
-      </form>
+      <IonButton
+        onClick={() =>
+          present({
+            header: "このバーコードを登録しますか？",
+            message: `${barcode}`,
+            buttons: [
+              "Cancel",
+              { text: "Ok", handler: (d) => console.log("ok pressed") },
+            ],
+            onDidDismiss: (e) => console.log("did dismiss"),
+          })
+        }
+      >
+        show alert
+      </IonButton>
       <div id="preview"></div>
     </div>
   );

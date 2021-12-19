@@ -10,19 +10,24 @@ import {
   IonFabButton,
   IonIcon,
   IonModal,
-  IonButton
+  IonButton,
+  IonList,
+  IonItem,
+  IonLabel,
 } from "@ionic/react";
 import Scan from "../components/Scan";
 import { cameraOutline } from "ionicons/icons";
-import {useState} from "react";
+import { useState } from "react";
+import Quagga from "quagga";
 
 const Home = () => {
   const title = "お酒を登録する";
-  
+
   const [showModal, setShowModal] = useState(false);
-  const closeModal = (bool) =>{
+  const closeModal = (bool) => {
     setShowModal(bool);
-  }
+    Quagga.stop();
+  };
   return (
     <IonPage>
       <IonHeader>
@@ -39,16 +44,14 @@ const Home = () => {
             <IonToolbar>
               <IonTitle>バーコードを読み取る</IonTitle>
               <IonButtons slot="end">
-                <IonButton onclick={() => closeModal(false)}>
-                  Close
-                </IonButton>
+                <IonButton onclick={() => closeModal(false)}>Close</IonButton>
               </IonButtons>
             </IonToolbar>
           </IonHeader>
           {/* ここにカメラを用意する 、というかモーダル内部で表示する方法が公式のチュートリアルでありそう */}
           <Scan />
         </IonModal>
-        ここにQuaggajsのやつを使うのと、現在の飲酒情報を書く
+        {/* ここにQuaggajsのやつを使うのと、現在の飲酒情報を書く
         <br />
         加えて、飲酒をやめるというボタンを用意し、ボタンが押されたら飲酒ログへログを追加し、ここに記載されている記録をクリアにする。Fabボタンで右上が望ましい？
         <br />
@@ -63,9 +66,21 @@ const Home = () => {
         その後、IonLoadingでローディングさせ、Listに追加する
         <br />
         カメラの許可がされなかった場合、Alertを表示する。
-        <br />
-        
+        <br /> */}
+        <IonList>
+          <IonItem>
+            <IonLabel>ここに登録したお酒が表示される</IonLabel>
+          </IonItem>
+        </IonList>
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
+          {/* 
+          Fabボタンが押された際にモーダルを起動するが、その瞬間にカメラを起動できるようにしたい
+          やりたいこと
+          Fabボタンが押される→modalが起動<-できてる
+          modalが起動したらカメラも起動<-ボタンを用意すればできてるけど不完全
+          modalの起動とカメラの起動をどうやって紐づけるか<-解決したい
+          onClickイベントに対して別個に用意したコンポーネントの紐づけ方<-わからない
+          */}
           <IonFabButton onClick={() => setShowModal(true)}>
             <IonIcon icon={cameraOutline} />
           </IonFabButton>
