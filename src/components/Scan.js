@@ -21,7 +21,7 @@ const Scan = () => {
     //     const janCode = value;
     //     props.onFormSubmit(janCode);
     // }
-    // const [barcode, setBarcode] = useState("4901411086798");
+    // const [barcode, setBarcode] = useState("4901411086798"); //このjanコードはダミーデータのようなもの
     // const [rawItemName, setRawItemName] = useState("");
 
     // const reloadItemName = (code) => {
@@ -135,7 +135,7 @@ const Scan = () => {
     //         Quagga.start();
     //     });
     // }
-    const [showModal, setShowModal] = useState(false);
+   
     return (
         // <div>
         //     <hr />
@@ -160,16 +160,6 @@ const Scan = () => {
         //     <div id="preview"></div>
         // </div>
         <IonContent>
-            <IonModal isOpen={showModal}>
-                <p>カメラを配置したいよ</p>
-                <IonButton onClick={() => setShowModal(false)}>Close Modal</IonButton>
-                {/* ここにカメラを用意する 、というかモーダル内部で表示する方法が公式のチュートリアルでありそう*/}
-            </IonModal>
-            <IonFab vertical="center" horizontal="end" slot="fixed">
-                <IonFabButton onClick={() => setShowModal(true)}>
-                    <IonIcon icon={cameraOutline} />
-                </IonFabButton>
-            </IonFab>
         </IonContent>
     );
 }
