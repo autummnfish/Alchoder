@@ -1,11 +1,11 @@
-import { useIonAlert, IonButton } from "@ionic/react";
+import { useIonAlert } from "@ionic/react";
 import Quagga from "quagga";
-import { useState, useEffect } from "react";
+import { useState,useEffect } from "react";
 import { fetchItemInfomation,fetchItemFormat } from "../api";
 
 const Scan = (props) => {
 
-  // const [barcode, setBarcode] = useState("4901411086798"); //このjanコードはダミーデータのようなもの
+  const [barcode, setBarcode] = useState("4901411086798"); //このjanコードはダミーデータのようなもの
   const [present] = useIonAlert();
 
   const addDrinkLog = (value) => {
@@ -14,6 +14,7 @@ const Scan = (props) => {
 
   const reloadItemName = (code) => {
     fetchItemInfomation(code).then((rawName) => {
+      setBarcode(code);
       if (rawName !== "" && rawName != null) {
         present({
           header: "このバーコードを登録しますか？",
@@ -69,15 +70,9 @@ const Scan = (props) => {
       //誤認識を防ぐために複数回バーコードが一致する場合としてもよさそう
       if (result != null) {
         setTimeout(reloadItemName(result.codeResult.code), 1000);
-        // setBarcode(result.codeResult.code);
       }
     });
   }, []);
-
-  const startCamera = (event) => {
-    event.preventDefault();
-    onChangeQuaggaCamera();
-  };
   const onChangeQuaggaCamera = () => {
     Quagga.init(config, (err) => {
       if (err) {
@@ -93,31 +88,9 @@ const Scan = (props) => {
     });
   };
 
-  const stopCamera = (event) =>{
-    event.preventDefault();
-    Quagga.stop();
-  }
-
   return (
     <div>
-      {/* <form onSubmit={(e) => startCamera(e)}>
-        <button>camera on</button>
-      </form>
-      <form onSubmit={(e) => stopCamera(e)}>
-        <button>camera stop</button>
-      </form>
-      <IonButton
-        onClick={() =>
-          present({
-            header: "カメラを許可してください",
-            buttons: [
-              "OK",
-            ],
-          })
-        }
-      >
-        show alert
-      </IonButton> */}
+      <div>読み込んでいるやつ：{barcode}</div>
       <div id="preview"></div>
     </div>
   );
