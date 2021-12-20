@@ -22,6 +22,13 @@ import Quagga from "quagga";
 
 const Home = () => {
   const title = "お酒を登録する";
+  const [tasks, setTasks] = useState([
+    { name: "ここに登録したお酒が表示されます" },
+  ]);
+
+  const updateTasks = (value) =>{
+    setTasks([...tasks,{name : value}]);
+  }
 
   const [showModal, setShowModal] = useState(false);
   const closeModal = (bool) => {
@@ -48,8 +55,7 @@ const Home = () => {
               </IonButtons>
             </IonToolbar>
           </IonHeader>
-          {/* ここにカメラを用意する 、というかモーダル内部で表示する方法が公式のチュートリアルでありそう */}
-          <Scan />
+            <Scan  addLog={updateTasks}/>
         </IonModal>
         {/* ここにQuaggajsのやつを使うのと、現在の飲酒情報を書く
         <br />
