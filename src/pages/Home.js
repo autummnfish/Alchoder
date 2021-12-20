@@ -14,6 +14,7 @@ import {
   IonList,
   IonItem,
   IonLabel,
+  useIonViewWillEnter,
 } from "@ionic/react";
 import Scan from "../components/Scan";
 import { cameraOutline } from "ionicons/icons";
@@ -26,9 +27,17 @@ const Home = () => {
     { name: "ここに登録したお酒が表示されます" },
   ]);
 
-  const updateTasks = (value) =>{
-    setTasks([...tasks,{name : value}]);
-  }
+  const updateTasks = (value) => {
+    const newTasks = [...tasks, { name: value }];
+    localStorage.setItem("tasks", JSON.stringify(newTasks));
+    setTasks(newTasks);
+  };
+
+  useIonViewWillEnter(() => {
+    if (localStorage.getItem("tasks") != null) {
+      setTasks(JSON.parse(localStorage.getItem("tasks")));
+    }
+  });
 
   const [showModal, setShowModal] = useState(false);
   const closeModal = (bool) => {
@@ -55,7 +64,7 @@ const Home = () => {
               </IonButtons>
             </IonToolbar>
           </IonHeader>
-            <Scan  addLog={updateTasks}/>
+          <Scan addLog={updateTasks} />
         </IonModal>
         {/* ここにQuaggajsのやつを使うのと、現在の飲酒情報を書く
         <br />
@@ -74,19 +83,15 @@ const Home = () => {
         カメラの許可がされなかった場合、Alertを表示する。
         <br /> */}
         <IonList>
-          <IonItem>
-            <IonLabel>ここに登録したお酒が表示される</IonLabel>
-          </IonItem>
+          {tasks.map((item) => {
+            return (
+              <IonItem>
+                <IonLabel>{item.name}</IonLabel>
+              </IonItem>
+            );
+          })}
         </IonList>
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
-          {/* 
-          Fabボタンが押された際にモーダルを起動するが、その瞬間にカメラを起動できるようにしたい
-          やりたいこと
-          Fabボタンが押される→modalが起動<-できてる
-          modalが起動したらカメラも起動<-ボタンを用意すればできてるけど不完全
-          modalの起動とカメラの起動をどうやって紐づけるか<-解決したい
-          onClickイベントに対して別個に用意したコンポーネントの紐づけ方<-わからない
-          */}
           <IonFabButton onClick={() => setShowModal(true)}>
             <IonIcon icon={cameraOutline} />
           </IonFabButton>
