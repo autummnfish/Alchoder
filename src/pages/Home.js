@@ -19,7 +19,6 @@ import {
 import Scan from "../components/Scan";
 import { cameraOutline } from "ionicons/icons";
 import { useState } from "react";
-import Quagga from "quagga";
 
 const Home = () => {
   const title = "お酒を登録する";
@@ -42,7 +41,7 @@ const Home = () => {
   const [showModal, setShowModal] = useState(false);
   const closeModal = (bool) => {
     setShowModal(bool);
-    Quagga.stop();
+    // Quagga.stop();
   };
   return (
     <IonPage>
