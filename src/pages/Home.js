@@ -19,7 +19,7 @@ import {
 import Scan from "../components/Scan";
 import { cameraOutline } from "ionicons/icons";
 import { useState } from "react";
-import Quagga from "quagga";
+import Quagga from "@ericblade/quagga2";
 
 const Home = () => {
   const title = "お酒を登録する";
