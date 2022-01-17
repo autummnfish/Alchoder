@@ -1,11 +1,10 @@
 import { useIonAlert } from "@ionic/react";
 // import { returnUpBack } from "ionicons/icons";
 import Quagga from "@ericblade/quagga2";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { fetchItemInfomation, fetchItemFormat } from "../api";
 
 const Scan = (props) => {
-  const [barcode, setBarcode] = useState("4901411086798"); //このjanコードはダミーデータのようなもの
   const [present] = useIonAlert();
 
   const addDrinkLog = (value) => {
@@ -14,8 +13,8 @@ const Scan = (props) => {
 
   const reloadItemName = (code) => {
     fetchItemInfomation(code).then((rawName) => {
-      setBarcode(code);
-      if (rawName !== "" && rawName != null) {
+      const rawNameDescription = rawName.hits[0].description
+      if (rawNameDescription !== "" && rawNameDescription != null) {
         present({
           header: "このバーコードを登録しますか？",
           message: `${code}`,
@@ -27,6 +26,7 @@ const Scan = (props) => {
                 fetchItemFormat(rawName).then((formatName) => {
                   addDrinkLog(formatName);
                 });
+                 
               },
             },
           ],
@@ -37,7 +37,6 @@ const Scan = (props) => {
 
   useEffect(() => {
     const cameraSize = Math.min(window.innerHeight, window.innerWidth);
-    const webWorker = Math.min(navigator.hardwareConcurrency, 4);
     const config = {
       //カメラ設定
       inputStream: {
@@ -64,7 +63,7 @@ const Scan = (props) => {
       },
 
       //使用可能なWebワーカー数の指定
-      numOfWorkers: webWorker,
+      numOfWorkers: navigator.hardwareConcurrency || 4,
 
       locate: true,
     };
@@ -72,20 +71,19 @@ const Scan = (props) => {
     const onChangeQuaggaCamera = () => {
       Quagga.init(config, (err) => {
         if (err) {
-          // present({
-          //   header: "カメラを許可してください",
-          //   buttons: ["OK"],
-          // });
+          present({
+            header: "カメラを許可してください",
+            buttons: ["OK"],
+          });
           return;
         }
         Quagga.start();
       });
     };
     Quagga.onDetected((result) => {
-      window.alert(result.codeResult.code);
       //誤認識を防ぐために複数回バーコードが一致する場合としてもよさそう
       if (result != null) {
-        // setTimeout(reloadItemName(result.codeResult.code), 1000);
+        setTimeout(reloadItemName(result.codeResult.code), 1000);
       }
     });
     onChangeQuaggaCamera();
@@ -93,7 +91,6 @@ const Scan = (props) => {
 
   return (
     <div>
-      {/* <div>読み込んでいるやつ : {barcode}</div> */}
       <div id="preview"></div>
     </div>
   );
