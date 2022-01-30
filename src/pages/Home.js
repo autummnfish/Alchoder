@@ -21,7 +21,7 @@ import { cameraOutline } from "ionicons/icons";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import Quagga from "@ericblade/quagga2";
-import { drinkLogArray } from "../atom";
+import { drinkLogState } from "../drinkLogState";
 
 const Home = () => {
   const title = "お酒を登録する";
@@ -30,12 +30,11 @@ const Home = () => {
     { name: "ここに登録したお酒が表示されます" },
   ]);
 
-  const [drinkLogs,setDrinkLogs] = useRecoilState(drinkLogArray);
+  const [drinkLogs,setDrinkLogs] = useRecoilState(drinkLogState);
 
   const savedrinkLog = (log)=>{
     const newDrinkLogs = drinkLogs != null ? [...drinkLogs,log] : [log];
     setDrinkLogs(newDrinkLogs);
-    console.log(newDrinkLogs);
   }
 
   const updateTasks = (value) => {
@@ -46,7 +45,7 @@ const Home = () => {
 
   useIonViewWillEnter(() => {
     if (localStorage.getItem("tasks") != null) {
-      setTasks(JSON.parse(localStorage.getItem("tasks")));
+      // setTasks(JSON.parse(localStorage.getItem("tasks")));
     }
   });
 
@@ -98,9 +97,5 @@ const Home = () => {
     </IonPage>
   );
 };
-
-// const Header = () =>{
-
-// }
 
 export default Home;

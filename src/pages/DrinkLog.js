@@ -15,6 +15,8 @@ import {
 } from "@ionic/react";
 import { useState } from "react";
 import { trash, create, close } from "ionicons/icons";
+import { drinkLogState } from "../drinkLogState";
+import { useRecoilState } from "recoil";
 
 const DrinkLog = () => {
   const title = "飲酒ログ";
@@ -22,12 +24,15 @@ const DrinkLog = () => {
   const [tasks, setTasks] = useState([
     { name: "ここに登録したお酒が表示されます" },
   ]);
+
+  const [drinkLogs,setDrinkLogs] = useRecoilState(drinkLogState);
+
   const [showActionSheet] = useIonActionSheet();
   const [showAlert] = useIonAlert();
 
   useIonViewWillEnter(() => {
     if (localStorage.getItem("tasks") != null) {
-      setTasks(JSON.parse(localStorage.getItem("tasks")));
+      // setTasks(JSON.parse(localStorage.getItem("tasks")));
     }
   });
 
@@ -100,7 +105,6 @@ const DrinkLog = () => {
                     text: "変更",
                     icon: create,
                     handler: () => {
-                      console.log("Share clicked");
                       renameTask(item.name);
                     },
                   },
@@ -109,7 +113,7 @@ const DrinkLog = () => {
                     icon: close,
                     role: "cancel",
                     handler: () => {
-                      console.log("Cancel clicked");
+                      // console.log("Cancel clicked");
                     },
                   },
                 ]);
