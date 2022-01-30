@@ -2,6 +2,7 @@
 import { IonApp, IonRouterOutlet, IonSplitPane, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Redirect, Route } from 'react-router-dom';
+import { RecoilRoot } from 'recoil';
 import Menu from './components/Menu';
 import Home from './pages/Home';
 import Info from './pages/Info';
@@ -31,6 +32,7 @@ setupIonicReact();
 const App: React.FC = () => {
   return (
     <IonApp>
+      <RecoilRoot>
       <IonReactRouter>
         <IonSplitPane contentId="main">
           <Menu />
@@ -50,6 +52,7 @@ const App: React.FC = () => {
           </IonRouterOutlet>
         </IonSplitPane>
       </IonReactRouter>
+      </RecoilRoot>
     </IonApp>
   );
 };

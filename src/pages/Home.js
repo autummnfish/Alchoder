@@ -19,13 +19,24 @@ import {
 import Scan from "../components/Scan";
 import { cameraOutline } from "ionicons/icons";
 import { useState } from "react";
+import { useRecoilState } from "recoil";
 import Quagga from "@ericblade/quagga2";
+import { drinkLogArray } from "../atom";
 
 const Home = () => {
   const title = "お酒を登録する";
   const [tasks, setTasks] = useState([
     { name: "ここに登録したお酒が表示されます" },
+    { name: "ここに登録したお酒が表示されます" },
   ]);
+
+  const [drinkLogs,setDrinkLogs] = useRecoilState(drinkLogArray);
+
+  const savedrinkLog = (log)=>{
+    const newDrinkLogs = drinkLogs != null ? [...drinkLogs,log] : [log];
+    setDrinkLogs(newDrinkLogs);
+    console.log(newDrinkLogs);
+  }
 
   const updateTasks = (value) => {
     const newTasks = [...tasks, { name: value }];
@@ -53,7 +64,7 @@ const Home = () => {
           </IonButtons>
           <IonTitle>{title}</IonTitle>
           <IonButtons slot="end">
-            <IonButton>保存</IonButton>
+            <IonButton onClick={() => savedrinkLog(tasks)}>保存</IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
