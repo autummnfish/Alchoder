@@ -52,6 +52,9 @@ const Home = () => {
             <IonMenuButton />
           </IonButtons>
           <IonTitle>{title}</IonTitle>
+          <IonButtons slot="end">
+            <IonButton>保存</IonButton>
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -84,5 +87,9 @@ const Home = () => {
     </IonPage>
   );
 };
+
+// const Header = () =>{
+
+// }
 
 export default Home;

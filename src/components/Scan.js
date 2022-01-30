@@ -81,7 +81,6 @@ const Scan = (props) => {
       });
     };
     Quagga.onDetected((result) => {
-      //誤認識を防ぐために複数回バーコードが一致する場合としてもよさそう
       if (result != null) {
         setTimeout(reloadItemName(result.codeResult.code), 1000);
       }
