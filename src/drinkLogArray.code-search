@@ -1,0 +1,22 @@
+# Query: drinkLogArray
+# ContextLines: 1
+
+4 件の結果 - 2 ファイル
+
+src/pages/DrinkLog.js:
+  17  import { trash, create, close } from "ionicons/icons";
+  18: import { drinkLogState } from "../atom";
+  19  import { useRecoilState } from "recoil";
+
+  27  
+  28:   const [drinkLogs,setDrinkLogs] = useRecoilState(drinkLogState);
+  29  
+
+src/pages/Home.js:
+  23  import Quagga from "@ericblade/quagga2";
+  24: import { drinkLogState } from "../atom";
+  25  
+
+  32  
+  33:   const [drinkLogs,setDrinkLogs] = useRecoilState(drinkLogState);
+  34  
