@@ -32,9 +32,24 @@ const Home = () => {
 
   const [drinkLogs,setDrinkLogs] = useRecoilState(drinkLogState);
 
+  const formateDate = () =>{
+    const now = new Date();
+    const ISO8601time = now.toISOString();
+    return ISO8601time.slice(0,10);
+  }
+
   const savedrinkLog = (log)=>{
-    const newDrinkLogs = drinkLogs != null ? [...drinkLogs,log] : [log];
+    if(log.length === 0) return;
+    const newLog = {
+      title:formateDate(),
+      array:log,
+    }
+    const newDrinkLogs = [...drinkLogs,newLog];
     setDrinkLogs(newDrinkLogs);
+    const newTasks = [{name : "ここに登録したお酒が表示されます"}]
+    setTasks(newTasks);
+    localStorage.setItem("tasks",JSON.stringify(newTasks));
+    localStorage.setItem("logs",JSON.stringify(newDrinkLogs));
   }
 
   const updateTasks = (value) => {

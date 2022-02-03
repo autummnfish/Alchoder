@@ -22,52 +22,22 @@ import { useRecoilState } from "recoil";
 const DrinkLog = () => {
   const title = "飲酒ログ";
 
-  const [tasks, setTasks] = useState([
-    { name: "ここに登録したお酒が表示されます" },
-  ]);
-
   const [drinkLogs, setDrinkLogs] = useRecoilState(drinkLogState);
-
-  const [showActionSheet] = useIonActionSheet();
-  const [showAlert] = useIonAlert();
+  const [selectedIndex,setSelectedIndex] = useState(-1);
 
   useIonViewWillEnter(() => {
-    if (localStorage.getItem("tasks") != null) {
-      // setTasks(JSON.parse(localStorage.getItem("tasks")));
+    if (localStorage.getItem("logs") != null) {
+      setDrinkLogs(JSON.parse(localStorage.getItem("logs")));
     }
   });
 
-  const deleteTasks = (targetIndex) => {
-    const newTasks = [...tasks];
-    newTasks.splice(targetIndex, 1);
-    setTasks(newTasks);
-    localStorage.setItem("tasks", JSON.stringify(newTasks));
-  };
+  const openModal = (index) =>{
+    setSelectedIndex(index);
+  }
 
-  const renameTask = (target, targetIndex) => {
-    showAlert({
-      header: "変更後の名前",
-      inputs: [
-        {
-          name: "name",
-          placeholder: "酒名",
-          value: target,
-        },
-      ],
-      buttons: [
-        { text: "閉じる" },
-        {
-          text: "保存",
-          handler: (input) => {
-            const newTasks = [...tasks];
-            newTasks.splice(targetIndex, 1, input);
-            setTasks(newTasks);
-            localStorage.setItem("tasks", JSON.stringify(newTasks));
-          },
-        },
-      ],
-    });
-  };
+  const closeModal = ()=>{
+    setSelectedIndex(-1);
+  }
 
   return (
     <IonPage>
@@ -80,84 +50,55 @@ const DrinkLog = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        {/* Homeの記録を受け取り、ログを配列に格納する。ログには飲酒が終了した日時を記載し、タップすることでalertが表示され、そこで詳しくログが見れるようにする
-        配列でいいのかはまた考える。 */}
-        {/* <IonList>
-          {tasks.map((item, index) => {
+        <IonList>
+          {drinkLogs.map((obj, index) => {
+            // console.log(obj);
             return (
-              <IonItem
-                onClick={() => {
-                  showActionSheet([
-                    {
-                      text: "削除",
-                      role: "destructive",
-                      icon: trash,
-                      handler: () => {
-                        deleteTasks(index);
-                      },
-                    },
-                    {
-                      text: "変更",
-                      icon: create,
-                      handler: () => {
-                        renameTask(item.name, index);
-                      },
-                    },
-                    {
-                      text: "閉じる",
-                      icon: close,
-                      role: "cancel",
-                      handler: () => {
-                        // console.log("Cancel clicked");
-                      },
-                    },
-                  ]);
-                }}
-              >
-                <IonLabel>{item.name}</IonLabel>
-              </IonItem>
+              <div>
+                <IonItem onClick={() => openModal(index)} >{obj.title}</IonItem>
+                <IonModal isOpen={index === selectedIndex} onDidDismiss={ () => closeModal}>
+                <Modal logObj={obj} index={index} />
+                </IonModal>
+              </div>
             );
           })}
-        </IonList> */}
-        {drinkLogs.map((arr) => {
-          return (
-            <IonList>
-              {arr.map((item) => {
-                return <IonItem>{item.name}</IonItem>;
-              })}
-            </IonList>
-          );
-        })}
+        </IonList>
       </IonContent>
     </IonPage>
   );
 };
-// modalでdrinklogsの中身を表示にする
-//そうすることで、tasksのusestate管理が楽になるはず
 
 /*
+drinkLogs = [
 {
   title: 登録例
-  arr:["ビール","梅酒","ウォッカ"]
-}
+  array:["ビール","梅酒","ウォッカ"]
+},
+...
+]
 tasksはnullにし、nullであればdrinklogに追加せずアラートを出す
 titleは通常yyyy/mm/ddの形式で表示
 
 */
-const Modal = (logArr, logIndex) => {
+const Modal = (props) => {
+  const logArr = props.logObj.array;
+  const logIndex = props.index;
   const [showActionSheet] = useIonActionSheet();
   const [drinkLogs, setDrinkLogs] = useRecoilState(drinkLogState);
-  const [tasks, setTasks] = useState(...drinkLogs[logIndex]);
+  const [tasks, setTasks] = useState([...drinkLogs[logIndex].array]);
   const [showAlert] = useIonAlert();
 
   const deleteTasks = (targetIndex) => {
     const newTasks = [...tasks];
-    setTasks(newTasks);
     newTasks.splice(targetIndex, 1);
-    const newArr = [...logArr];
-    newArr.splice(logIndex, 1, newTasks);
-    setDrinkLogs(newArr);
-    localStorage.setItem("logs", JSON.stringify(newArr));
+    setTasks(newTasks);
+    const newDrinkLogs = [...drinkLogs];
+    newDrinkLogs.splice(logIndex, 1, {
+      title: props.logObj.title,
+      array: newTasks,
+    });
+    setDrinkLogs(newDrinkLogs);
+    localStorage.setItem("logs", JSON.stringify(newDrinkLogs));
   };
 
   const renameTask = (target, targetIndex) => {
@@ -178,17 +119,21 @@ const Modal = (logArr, logIndex) => {
             const newTasks = [...tasks];
             newTasks.splice(targetIndex, 1, input);
             setTasks(newTasks);
-            const newArr = [...logArr];
-            newArr.splice(logIndex, 1, newTasks);
-            setDrinkLogs(newArr);
-            localStorage.setItem("logs", JSON.stringify(newArr));
+            const newDrinkLogs = [...drinkLogs];
+            newDrinkLogs.splice(logIndex, 1, {
+              title: props.logObj.title,
+              array: newTasks,
+            });
+            setDrinkLogs(newDrinkLogs);
+            localStorage.setItem("logs", JSON.stringify(newDrinkLogs));
           },
         },
       ],
     });
   };
+
   return (
-    <IonList>
+    <IonList slot="content">
       {logArr.map((item, index) => {
         return (
           <IonItem
