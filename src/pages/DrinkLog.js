@@ -91,7 +91,6 @@ const DrinkLog = () => {
       <IonContent fullscreen>
         <IonList>
           {drinkLogs.map((obj, index) => {
-            // console.log(obj);
             return (
               <div>
                 <IonItem
@@ -130,7 +129,7 @@ const DrinkLog = () => {
                     ]);
                   }}
                 >
-                  {obj.title}
+                  <IonLabel>{obj.title}</IonLabel>
                 </IonItem>
                 <IonModal
                   isOpen={index === selectedIndex}
@@ -140,7 +139,9 @@ const DrinkLog = () => {
                     <IonToolbar>
                       <IonTitle>{obj.title}</IonTitle>
                       <IonButtons slot="end">
-                        <IonButton onClick={() => closeModal()}>閉じる</IonButton>
+                        <IonButton onClick={() => closeModal()}>
+                          閉じる
+                        </IonButton>
                       </IonButtons>
                     </IonToolbar>
                   </IonHeader>
@@ -163,7 +164,7 @@ const Modal = (props) => {
   const [tasks, setTasks] = useState([...drinkLogs[logIndex].array]);
   const [showAlert] = useIonAlert();
 
-  const deleteTasks = (targetIndex) => {
+  const deleteTask = (targetIndex) => {
     const newTasks = [...tasks];
     newTasks.splice(targetIndex, 1);
     setTasks(newTasks);
@@ -219,7 +220,7 @@ const Modal = (props) => {
                   role: "destructive",
                   icon: trash,
                   handler: () => {
-                    deleteTasks(index);
+                    deleteTask(index);
                   },
                 },
                 {

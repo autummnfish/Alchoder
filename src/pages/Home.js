@@ -15,10 +15,11 @@ import {
   IonItem,
   IonLabel,
   useIonViewWillEnter,
+  useIonActionSheet,
   useIonAlert,
 } from "@ionic/react";
 import Scan from "../components/Scan";
-import { cameraOutline } from "ionicons/icons";
+import { cameraOutline, trash, create, close } from "ionicons/icons";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import Quagga from "@ericblade/quagga2";
@@ -33,6 +34,7 @@ const Home = () => {
   const [drinkLogs, setDrinkLogs] = useRecoilState(drinkLogState);
   const [showModal, setShowModal] = useState(false);
   const [showAlert] = useIonAlert();
+  const [showActionSheet] = useIonActionSheet();
 
   useIonViewWillEnter(() => {
     if (localStorage.getItem("tasks") != null) {
@@ -74,6 +76,37 @@ const Home = () => {
     setTasks(newTasks);
   };
 
+  const deleteTask = (targetIndex) => {
+    const newTasks = [...tasks];
+    newTasks.splice(targetIndex, 1);
+    localStorage.setItem("tasks", JSON.stringify(newTasks));
+    setTasks(newTasks);
+  };
+
+  const renameTask = (name, targetIndex) => {
+    showAlert({
+      header: "変更後の名前",
+      inputs: [
+        {
+          name: "name",
+          placeholder: "酒名",
+          value: name,
+        },
+      ],
+      buttons: [
+        { text: "閉じる" },
+        {
+          text: "保存",
+          handler: (input) => {
+            const newTasks = [...tasks];
+            newTasks.splice(targetIndex, 1, input);
+            localStorage.setItem("tasks", JSON.stringify(newTasks));
+            setTasks(newTasks);
+          },
+        },
+      ],
+    });
+  };
   const closeModal = (bool) => {
     setShowModal(bool);
     Quagga.stop();
@@ -105,9 +138,37 @@ const Home = () => {
           <Scan addLog={updateTasks} />
         </IonModal>
         <IonList>
-          {tasks.map((item) => {
+          {tasks.map((item, index) => {
             return (
-              <IonItem>
+              <IonItem
+                onClick={() => {
+                  showActionSheet([
+                    {
+                      text: "削除",
+                      role: "destructive",
+                      icon: trash,
+                      handler: () => {
+                        deleteTask(index);
+                      },
+                    },
+                    {
+                      text: "変更",
+                      icon: create,
+                      handler: () => {
+                        renameTask(item.name, index);
+                      },
+                    },
+                    {
+                      text: "閉じる",
+                      icon: close,
+                      role: "cancel",
+                      handler: () => {
+                        // console.log("Cancel clicked");
+                      },
+                    },
+                  ]);
+                }}
+              >
                 <IonLabel>{item.name}</IonLabel>
               </IonItem>
             );
