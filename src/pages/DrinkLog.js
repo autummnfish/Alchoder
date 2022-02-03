@@ -10,12 +10,13 @@ import {
   IonItem,
   IonLabel,
   IonModal,
+  IonButton,
   useIonViewWillEnter,
   useIonActionSheet,
   useIonAlert,
 } from "@ionic/react";
 import { useState } from "react";
-import { trash, create, close } from "ionicons/icons";
+import { trash, create, close, open } from "ionicons/icons";
 import { drinkLogState } from "../drinkLogState";
 import { useRecoilState } from "recoil";
 
@@ -23,7 +24,9 @@ const DrinkLog = () => {
   const title = "飲酒ログ";
 
   const [drinkLogs, setDrinkLogs] = useRecoilState(drinkLogState);
-  const [selectedIndex,setSelectedIndex] = useState(-1);
+  const [showActionSheet] = useIonActionSheet();
+  const [showAlert] = useIonAlert();
+  const [selectedIndex, setSelectedIndex] = useState(-1);
 
   useIonViewWillEnter(() => {
     if (localStorage.getItem("logs") != null) {
@@ -31,13 +34,49 @@ const DrinkLog = () => {
     }
   });
 
-  const openModal = (index) =>{
+  const openModal = (index) => {
     setSelectedIndex(index);
-  }
+  };
 
-  const closeModal = ()=>{
+  const closeModal = () => {
     setSelectedIndex(-1);
-  }
+  };
+
+  const deleteDrinkLog = (targetIndex) => {
+    const newDrinkLogs = [...drinkLogs];
+    newDrinkLogs.splice(targetIndex, 1);
+    setDrinkLogs(newDrinkLogs);
+    localStorage.setItem("logs", JSON.stringify(newDrinkLogs));
+  };
+
+  const renameDrinkLog = (name, targetIndex) => {
+    showAlert({
+      header: "変更後の名前",
+      inputs: [
+        {
+          name: "name",
+          placeholder: "タイトル",
+          value: name,
+        },
+      ],
+      buttons: [
+        { text: "閉じる" },
+        {
+          text: "保存",
+          handler: (input) => {
+            const newDrinkLogs = [...drinkLogs];
+            const newLog = {
+              title: input,
+              array: newDrinkLogs[targetIndex].array,
+            };
+            newDrinkLogs.splice(targetIndex, 1, newLog);
+            setDrinkLogs(newDrinkLogs);
+            localStorage.setItem("logs", JSON.stringify(newDrinkLogs));
+          },
+        },
+      ],
+    });
+  };
 
   return (
     <IonPage>
@@ -55,9 +94,57 @@ const DrinkLog = () => {
             // console.log(obj);
             return (
               <div>
-                <IonItem onClick={() => openModal(index)} >{obj.title}</IonItem>
-                <IonModal isOpen={index === selectedIndex} onDidDismiss={ () => closeModal}>
-                <Modal logObj={obj} index={index} />
+                <IonItem
+                  onClick={() => {
+                    showActionSheet([
+                      {
+                        text: "表示",
+                        icon: open,
+                        handler: () => {
+                          openModal(index);
+                        },
+                      },
+                      {
+                        text: "削除",
+                        role: "destructive",
+                        icon: trash,
+                        handler: () => {
+                          deleteDrinkLog(index);
+                        },
+                      },
+                      {
+                        text: "変更",
+                        icon: create,
+                        handler: () => {
+                          renameDrinkLog(obj.title, index);
+                        },
+                      },
+                      {
+                        text: "閉じる",
+                        icon: close,
+                        role: "cancel",
+                        handler: () => {
+                          // console.log("Cancel clicked");
+                        },
+                      },
+                    ]);
+                  }}
+                >
+                  {obj.title}
+                </IonItem>
+                <IonModal
+                  isOpen={index === selectedIndex}
+                  onDidDismiss={() => closeModal()}
+                >
+                  <IonHeader translucent>
+                    <IonToolbar>
+                      <IonTitle>{obj.title}</IonTitle>
+                      <IonButtons slot="end">
+                        <IonButton onClick={() => closeModal()}>閉じる</IonButton>
+                      </IonButtons>
+                    </IonToolbar>
+                  </IonHeader>
+                  <Modal logObj={obj} index={index} />
                 </IonModal>
               </div>
             );
@@ -68,18 +155,6 @@ const DrinkLog = () => {
   );
 };
 
-/*
-drinkLogs = [
-{
-  title: 登録例
-  array:["ビール","梅酒","ウォッカ"]
-},
-...
-]
-tasksはnullにし、nullであればdrinklogに追加せずアラートを出す
-titleは通常yyyy/mm/ddの形式で表示
-
-*/
 const Modal = (props) => {
   const logArr = props.logObj.array;
   const logIndex = props.index;

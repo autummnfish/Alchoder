@@ -15,6 +15,7 @@ import {
   IonItem,
   IonLabel,
   useIonViewWillEnter,
+  useIonAlert,
 } from "@ionic/react";
 import Scan from "../components/Scan";
 import { cameraOutline } from "ionicons/icons";
@@ -27,36 +28,11 @@ const Home = () => {
   const title = "お酒を登録する";
   const [tasks, setTasks] = useState([
     { name: "ここに登録したお酒が表示されます" },
-    { name: "ここに登録したお酒が表示されます" },
   ]);
 
-  const [drinkLogs,setDrinkLogs] = useRecoilState(drinkLogState);
-
-  const formateDate = () =>{
-    const now = new Date();
-    const ISO8601time = now.toISOString();
-    return ISO8601time.slice(0,10);
-  }
-
-  const savedrinkLog = (log)=>{
-    if(log.length === 0) return;
-    const newLog = {
-      title:formateDate(),
-      array:log,
-    }
-    const newDrinkLogs = [...drinkLogs,newLog];
-    setDrinkLogs(newDrinkLogs);
-    const newTasks = [{name : "ここに登録したお酒が表示されます"}]
-    setTasks(newTasks);
-    localStorage.setItem("tasks",JSON.stringify(newTasks));
-    localStorage.setItem("logs",JSON.stringify(newDrinkLogs));
-  }
-
-  const updateTasks = (value) => {
-    const newTasks = [...tasks, { name: value }];
-    localStorage.setItem("tasks", JSON.stringify(newTasks));
-    setTasks(newTasks);
-  };
+  const [drinkLogs, setDrinkLogs] = useRecoilState(drinkLogState);
+  const [showModal, setShowModal] = useState(false);
+  const [showAlert] = useIonAlert();
 
   useIonViewWillEnter(() => {
     if (localStorage.getItem("tasks") != null) {
@@ -64,11 +40,45 @@ const Home = () => {
     }
   });
 
-  const [showModal, setShowModal] = useState(false);
+  const formateDate = () => {
+    const now = new Date();
+    const ISO8601time = now.toISOString();
+    return ISO8601time.slice(0, 10);
+  };
+
+  const savedrinkLog = (log) => {
+    if (log.length === 0) {
+      showAlert({
+        header: "何も登録されていません",
+        message: "お酒を登録してみましょう",
+        buttons: ["OK"],
+      });
+      return;
+    }
+    const newLog = {
+      title: formateDate(),
+      array: log,
+    };
+    const newDrinkLogs = [...drinkLogs, newLog];
+    setDrinkLogs(newDrinkLogs);
+    // const newTasks = [];
+    const newTasks = [{ name: "ここに登録したお酒が表示されます" }];
+    setTasks(newTasks);
+    localStorage.setItem("tasks", JSON.stringify(newTasks));
+    localStorage.setItem("logs", JSON.stringify(newDrinkLogs));
+  };
+
+  const updateTasks = (value) => {
+    const newTasks = [...tasks, { name: value }];
+    localStorage.setItem("tasks", JSON.stringify(newTasks));
+    setTasks(newTasks);
+  };
+
   const closeModal = (bool) => {
     setShowModal(bool);
     Quagga.stop();
   };
+
   return (
     <IonPage>
       <IonHeader>
@@ -88,7 +98,7 @@ const Home = () => {
             <IonToolbar>
               <IonTitle>バーコードを読み取る</IonTitle>
               <IonButtons slot="end">
-                <IonButton onclick={() => closeModal(false)}>Close</IonButton>
+                <IonButton onclick={() => closeModal(false)}>閉じる</IonButton>
               </IonButtons>
             </IonToolbar>
           </IonHeader>
