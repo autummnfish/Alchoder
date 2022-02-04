@@ -63,14 +63,15 @@ const Home = () => {
     };
     const newDrinkLogs = [...drinkLogs, newLog];
     setDrinkLogs(newDrinkLogs);
-    // const newTasks = [];
-    const newTasks = [{ name: "ここに登録したお酒が表示されます" }];
+    const newTasks = [];
+    // const newTasks = [{ name: "ここに登録したお酒が表示されます" }];
     setTasks(newTasks);
     localStorage.setItem("tasks", JSON.stringify(newTasks));
     localStorage.setItem("logs", JSON.stringify(newDrinkLogs));
   };
 
   const updateTasks = (value) => {
+    setShowModal(false);
     const newTasks = [...tasks, { name: value }];
     localStorage.setItem("tasks", JSON.stringify(newTasks));
     setTasks(newTasks);

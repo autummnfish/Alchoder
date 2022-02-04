@@ -15,6 +15,7 @@ const Scan = (props) => {
     fetchItemInfomation(code).then((rawName) => {
       const rawNameDescription = rawName.hits[0].description
       if (rawNameDescription !== "" && rawNameDescription != null) {
+        Quagga.stop();
         present({
           header: "このバーコードを登録しますか？",
           message: `${code}`,
@@ -58,7 +59,7 @@ const Scan = (props) => {
       },
       //読み取るバーコードの種類
       decoder: {
-        readers: ["ean_reader"],
+        readers: ["ean_reader","ean_8_reader"],
         multiple: false,
       },
 
@@ -82,7 +83,7 @@ const Scan = (props) => {
     };
     Quagga.onDetected((result) => {
       if (result != null) {
-        setTimeout(reloadItemName(result.codeResult.code), 1000);
+        setTimeout(reloadItemName(result.codeResult.code), 5000);
       }
     });
     onChangeQuaggaCamera();
