@@ -148,7 +148,20 @@ const Home = () => {
                       role: "destructive",
                       icon: trash,
                       handler: () => {
-                        deleteTask(index);
+                        showAlert({
+                          header: "この商品を削除しますか？",
+                          // message: `${code}`,
+                          buttons: [
+                            "Cancel",
+                            {
+                              text: "OK",
+                              handler: () => {
+                                deleteTask(index);
+                              },
+                            },
+                          ],
+                        });
+                        // deleteTask(index);
                       },
                     },
                     {

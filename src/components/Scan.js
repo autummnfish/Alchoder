@@ -6,6 +6,7 @@ import { fetchItemInfomation, fetchItemFormat } from "../api";
 
 const Scan = (props) => {
   const [present] = useIonAlert();
+  // const []
 
   const addDrinkLog = (value) => {
     props.addLog(value);
@@ -21,7 +22,7 @@ const Scan = (props) => {
           buttons: [
             "Cancel",
             {
-              text: "Ok",
+              text: "OK",
               handler: () => {
                 fetchItemFormat(rawName).then((formatName) => {
                   addDrinkLog(formatName);

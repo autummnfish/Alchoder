@@ -108,7 +108,20 @@ const DrinkLog = () => {
                         role: "destructive",
                         icon: trash,
                         handler: () => {
-                          deleteDrinkLog(index);
+                          showAlert({
+                            header: "この記録を削除しますか？",
+                            // message: `${code}`,
+                            buttons: [
+                              "Cancel",
+                              {
+                                text: "OK",
+                                handler: () => {
+                                  deleteDrinkLog(index);
+                                },
+                              },
+                            ],
+                          });
+                          
                         },
                       },
                       {
