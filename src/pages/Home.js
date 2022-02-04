@@ -74,6 +74,7 @@ const Home = () => {
     const newTasks = [...tasks, { name: value }];
     localStorage.setItem("tasks", JSON.stringify(newTasks));
     setTasks(newTasks);
+    closeModal(false);
   };
 
   const deleteTask = (targetIndex) => {
@@ -150,7 +151,6 @@ const Home = () => {
                       handler: () => {
                         showAlert({
                           header: "この商品を削除しますか？",
-                          // message: `${code}`,
                           buttons: [
                             "Cancel",
                             {
@@ -161,7 +161,6 @@ const Home = () => {
                             },
                           ],
                         });
-                        // deleteTask(index);
                       },
                     },
                     {

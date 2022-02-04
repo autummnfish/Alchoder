@@ -110,7 +110,6 @@ const DrinkLog = () => {
                         handler: () => {
                           showAlert({
                             header: "この記録を削除しますか？",
-                            // message: `${code}`,
                             buttons: [
                               "Cancel",
                               {
@@ -121,7 +120,6 @@ const DrinkLog = () => {
                               },
                             ],
                           });
-                          
                         },
                       },
                       {

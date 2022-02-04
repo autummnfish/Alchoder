@@ -1,20 +1,26 @@
 import { useIonAlert } from "@ionic/react";
 // import { returnUpBack } from "ionicons/icons";
 import Quagga from "@ericblade/quagga2";
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 import { fetchItemInfomation, fetchItemFormat } from "../api";
 
 const Scan = (props) => {
   const [present] = useIonAlert();
-  // const []
+  const [admitCamera,setAdmitCamera] = useState(false);
 
   const addDrinkLog = (value) => {
     props.addLog(value);
   };
 
+  const detectBarcode = (result)=>{
+    if(result != null){
+      setTimeout(reloadItemName(result.codeResult.code), 1000);
+    }
+  }
+
   const reloadItemName = (code) => {
     fetchItemInfomation(code).then((rawName) => {
-      const rawNameDescription = rawName.hits[0].description
+      const rawNameDescription = rawName != null ? rawName.hits[0].description : null
       if (rawNameDescription !== "" && rawNameDescription != null) {
         present({
           header: "このバーコードを登録しますか？",
@@ -27,11 +33,12 @@ const Scan = (props) => {
                 fetchItemFormat(rawName).then((formatName) => {
                   addDrinkLog(formatName);
                 });
-                 
               },
             },
           ],
         });
+      } else{
+        Quagga.start();
       }
     });
   };
@@ -71,23 +78,26 @@ const Scan = (props) => {
 
     const onChangeQuaggaCamera = () => {
       Quagga.init(config, (err) => {
-        if (err) {
+        if (err && !admitCamera) {
           present({
             header: "カメラを許可してください",
             buttons: ["OK"],
           });
           return;
         }
+        setAdmitCamera(true);
         Quagga.start();
       });
     };
     Quagga.onDetected((result) => {
-      if (result != null) {
-        setTimeout(reloadItemName(result.codeResult.code), 1000);
-      }
+      Quagga.offProcessed(detectBarcode);
+      Quagga.offDetected(detectBarcode);
+      detectBarcode(result);
     });
     onChangeQuaggaCamera();
   }, []);
+
+
 
   return (
     <div>
