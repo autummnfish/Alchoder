@@ -58,7 +58,7 @@ const Scan = (props) => {
       },
       //読み取るバーコードの種類
       decoder: {
-        readers: ["ean_reader"],
+        readers: ["ean_reader","ean_8_reader"],
         multiple: false,
       },
 
