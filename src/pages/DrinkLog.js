@@ -134,7 +134,6 @@ const DrinkLog = () => {
                         icon: close,
                         role: "cancel",
                         handler: () => {
-                          // console.log("Cancel clicked");
                         },
                       },
                     ]);
@@ -246,7 +245,6 @@ const Modal = (props) => {
                   icon: close,
                   role: "cancel",
                   handler: () => {
-                    // console.log("Cancel clicked");
                   },
                 },
               ]);

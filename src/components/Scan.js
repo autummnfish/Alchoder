@@ -1,6 +1,6 @@
 import { useIonAlert } from "@ionic/react";
 import Quagga from "@ericblade/quagga2";
-import { useState, useLayoutEffect, useCallback,useEffect } from "react";
+import { useState, useLayoutEffect, useCallback } from "react";
 import { fetchItemInfomation, fetchItemFormat } from "../api";
 
 function getMedian(arr) {
@@ -85,9 +85,9 @@ const Scan = (props) => {
 					{ color: "blue", lineWidth: 2 },
 				);
 			}
-			if(result.codeResult && result.codeResult.code){
-				drawingCtx.font = "24px Arial"
-				drawingCtx.fillText(result.codeResult.code,10,20);
+			if (result.codeResult && result.codeResult.code) {
+				drawingCtx.font = "24px Arial";
+				drawingCtx.fillText(result.codeResult.code, 10, 20);
 			}
 		}
 	};
@@ -119,42 +119,23 @@ const Scan = (props) => {
 
 		Quagga.init(config, (err) => {
 			Quagga.onProcessed(handleProcessed);
-			if(err && !admitCamera) {
+			if (err) {
 				present({
 					header: "カメラを許可してください",
 					buttons: ["OK"],
 				});
 			} else {
-				setAdmitCamera(true)
+				setAdmitCamera(true);
 				Quagga.start();
 			}
 			Quagga.onDetected(checkError);
-			return () => {
-				Quagga.offDetected(checkError)
-				Quagga.offProcessed(handleProcessed)
-				Quagga.stop();
-			}
-		})
-
-		// const onChangeQuaggaCamera = () => {
-		// 	Quagga.init(config, (err) => {
-		// 		if (err && !admitCamera) {
-		// 			present({
-		// 				header: "カメラを許可してください",
-		// 				buttons: ["OK"],
-		// 			});
-		// 			return;
-		// 		}
-		// 		setAdmitCamera(true);
-		// 		Quagga.start();
-		// 	});
-		// };
-		// // Quagga.onDetected((result) => {
-		// //   detectBarcode(result);
-		// // });
-		// onChangeQuaggaCamera();
-		console.log(123);
-	}, [admitCamera, present,checkError]);
+		});
+		return () => {
+			Quagga.offDetected(checkError);
+			Quagga.offProcessed(handleProcessed);
+			Quagga.stop();
+		};
+	}, [admitCamera, present, checkError]);
 
 	return (
 		<div>

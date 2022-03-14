@@ -135,6 +135,9 @@ const Home = () => {
 					<IonHeader translucent>
 						<IonToolbar>
 							<IonTitle>バーコードを読み取る</IonTitle>
+							<IonButtons slot="start">
+								<IonButton onclick={() => Quagga.stop()}>stop</IonButton>
+							</IonButtons>
 							<IonButtons slot="end">
 								<IonButton onclick={() => closeModal(false)}>
 									閉じる
@@ -183,7 +186,6 @@ const Home = () => {
 											icon: close,
 											role: "cancel",
 											handler: () => {
-												// console.log("Cancel clicked");
 											},
 										},
 									]);
