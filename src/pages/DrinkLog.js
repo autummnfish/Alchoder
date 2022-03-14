@@ -34,22 +34,22 @@ const DrinkLog = () => {
     }
   });
 
-  const openModal = (index) => {
+  function openModal(index){
     setSelectedIndex(index);
   };
 
-  const closeModal = () => {
+  function closeModal(){
     setSelectedIndex(-1);
   };
 
-  const deleteDrinkLog = (targetIndex) => {
+  function deleteDrinkLog(targetIndex){
     const newDrinkLogs = [...drinkLogs];
     newDrinkLogs.splice(targetIndex, 1);
     setDrinkLogs(newDrinkLogs);
     localStorage.setItem("logs", JSON.stringify(newDrinkLogs));
   };
 
-  const renameDrinkLog = (name, targetIndex) => {
+  function renameDrinkLog(name, targetIndex){
     showAlert({
       header: "変更後の名前",
       inputs: [
@@ -175,7 +175,7 @@ const Modal = (props) => {
   const [tasks, setTasks] = useState([...drinkLogs[logIndex].array]);
   const [showAlert] = useIonAlert();
 
-  const deleteTask = (targetIndex) => {
+  function deleteTask(targetIndex){
     const newTasks = [...tasks];
     newTasks.splice(targetIndex, 1);
     setTasks(newTasks);
@@ -188,7 +188,7 @@ const Modal = (props) => {
     localStorage.setItem("logs", JSON.stringify(newDrinkLogs));
   };
 
-  const renameTask = (target, targetIndex) => {
+  function renameTask(target, targetIndex){
     showAlert({
       header: "変更後の名前",
       inputs: [
