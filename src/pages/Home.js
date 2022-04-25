@@ -22,7 +22,6 @@ import Scan from "../components/Scan";
 import { cameraOutline, trash, create, close } from "ionicons/icons";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
-import Quagga from "@ericblade/quagga2";
 import { drinkLogState } from "../recoilstates/drinkLogState";
 
 function Home() {
