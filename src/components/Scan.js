@@ -1,6 +1,6 @@
 import { useIonAlert } from '@ionic/react';
 import Quagga from '@ericblade/quagga2';
-import { useLayoutEffect } from 'react';
+import { useLayoutEffect,useState } from 'react';
 import { fetchItemInfomation, fetchItemFormat } from '../api';
 import { AdmitCameraState } from '../recoilstates/AdmitCameraState';
 import { useRecoilState } from 'recoil';
@@ -9,6 +9,8 @@ const Scan = ({ addLog }) => {
   const [admitCamera, setAdmitCamera] = useRecoilState(AdmitCameraState);
   const [registerJanCode] = useIonAlert();
   const [AlertCameraAdmitSheet] = useIonAlert();
+	const [checkJancode,setCheckJancode] = useState(false);
+	const [count,setcount] = useState(0);
 
   useLayoutEffect(() => {
     const cameraSize = Math.min(window.innerHeight, window.innerWidth);
@@ -75,13 +77,18 @@ const Scan = ({ addLog }) => {
 
     Quagga.onDetected((result) => {
       if (result != null) {
-        setTimeout(reloadItemName(result.codeResult.code), 1000);
+				setcount(c => c+1);
+				//FIXME:複数回認識されるため、2回目以降の認識でバグる
+				//一度バグに集中するため、reloadItemNameを使用しない
+				//useCallbackが怪しい、特にreloadItemNameをラップすべきか？
+        // setTimeout(reloadItemName(result.codeResult.code), 1000);
+				window.alert(`code is ${result.codeResult.code} time is ${count}`);
       }
     });
     return () => {
       Quagga.stop();
     };
-  }, [AlertCameraAdmitSheet, setAdmitCamera, addLog, registerJanCode, admitCamera]);
+  }, [AlertCameraAdmitSheet, setAdmitCamera, addLog, registerJanCode, admitCamera,count]);
 
   return (
     <div>

@@ -47,6 +47,7 @@ function Home() {
 	};
 
 	const saveDrinkLog = (log) => {
+		//TODO:保存時に警告を表示する
 		if (log.length === 0) {
 			showAlert({
 				header: "何も登録されていません",
@@ -72,7 +73,7 @@ function Home() {
 		const newTasks = [...tasks, { name: value }];
 		localStorage.setItem("tasks", JSON.stringify(newTasks));
 		setTasks(newTasks);
-		closeModal(false);
+		setShowModal(false);
 	};
 
 	const deleteTask = (targetIndex) => {
@@ -107,10 +108,6 @@ function Home() {
 		});
 	};
 
-	const closeModal = (bool) => {
-		setShowModal(bool);
-	};
-
 	return (
 		<IonPage>
 			<IonHeader>
@@ -129,7 +126,7 @@ function Home() {
 			<IonContent fullscreen>
 				<IonModal
 					isOpen={showModal}
-					onDidDismiss={() => closeModal(false)}
+					onDidDismiss={() => setShowModal(false)}
 				>
 					<IonHeader translucent>
 						<IonToolbar>
@@ -137,7 +134,7 @@ function Home() {
 							<IonButtons slot="start">
 							</IonButtons>
 							<IonButtons slot="end">
-								<IonButton onclick={() => closeModal(false)}>
+								<IonButton onclick={() => setShowModal(false)}>
 									閉じる
 								</IonButton>
 							</IonButtons>
@@ -146,6 +143,7 @@ function Home() {
 					<Scan addLog={updateTasks} />
 				</IonModal>
 				<IonList>
+					{/* TODO:スワイプでも削除ができるようにする、これは警告いらない */}
 					{tasks.map((item, index) => {
 						return (
 							<IonItem
