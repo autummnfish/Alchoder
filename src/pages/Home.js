@@ -23,9 +23,9 @@ import { cameraOutline, trash, create, close } from "ionicons/icons";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import Quagga from "@ericblade/quagga2";
-import { drinkLogState } from "../drinkLogState";
+import { drinkLogState } from "../recoilstates/drinkLogState";
 
-const Home = () => {
+function Home() {
 	const title = "お酒を登録する";
 	const [tasks, setTasks] = useState([
 		{ name: "ここに登録したお酒が表示されます" },
@@ -42,10 +42,10 @@ const Home = () => {
 		}
 	});
 
-	function formateDate() {
+	const formateDate = () => {
 		const date = new Date();
 		return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-	}
+	};
 
 	const saveDrinkLog = (log) => {
 		if (log.length === 0) {
@@ -107,9 +107,9 @@ const Home = () => {
 			],
 		});
 	};
+
 	const closeModal = (bool) => {
 		setShowModal(bool);
-		Quagga.stop();
 	};
 
 	return (
@@ -136,7 +136,6 @@ const Home = () => {
 						<IonToolbar>
 							<IonTitle>バーコードを読み取る</IonTitle>
 							<IonButtons slot="start">
-								<IonButton onclick={() => Quagga.stop()}>stop</IonButton>
 							</IonButtons>
 							<IonButtons slot="end">
 								<IonButton onclick={() => closeModal(false)}>
@@ -185,11 +184,11 @@ const Home = () => {
 											text: "閉じる",
 											icon: close,
 											role: "cancel",
-											handler: () => {
-											},
+											handler: () => {},
 										},
 									]);
 								}}
+								key={`index is ${index}`}
 							>
 								<IonLabel>{item.name}</IonLabel>
 							</IonItem>
@@ -204,6 +203,6 @@ const Home = () => {
 			</IonContent>
 		</IonPage>
 	);
-};
+}
 
 export default Home;

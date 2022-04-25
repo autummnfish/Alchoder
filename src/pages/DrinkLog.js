@@ -17,7 +17,7 @@ import {
 } from "@ionic/react";
 import { useState } from "react";
 import { trash, create, close, open } from "ionicons/icons";
-import { drinkLogState } from "../drinkLogState";
+import { drinkLogState } from "../recoilstates/drinkLogState";
 import { useRecoilState } from "recoil";
 
 const DrinkLog = () => {
