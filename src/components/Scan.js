@@ -1,92 +1,113 @@
-import { useIonAlert } from "@ionic/react";
-// import { returnUpBack } from "ionicons/icons";
-import Quagga from "@ericblade/quagga2";
-import { useEffect } from "react";
-import { fetchItemInfomation, fetchItemFormat } from "../api";
+import { useIonAlert } from '@ionic/react';
+import Quagga from '@ericblade/quagga2';
+import { useCallback, useLayoutEffect,useState } from 'react';
+import { fetchItemInfomation, fetchItemFormat } from '../api';
+import { AdmitCameraState } from '../recoilstates/AdmitCameraState';
+import { useRecoilState } from 'recoil';
 
-const Scan = (props) => {
-  const [present] = useIonAlert();
+const Scanner = ({ addLog }) => {
+  const [admitCamera, setAdmitCamera] = useRecoilState(AdmitCameraState);
+  const [registerJanCode] = useIonAlert();
+  const [AlertCameraAdmitSheet] = useIonAlert();
+  const [nowJancode, setNowJancode] = useState("");
 
-  const addDrinkLog = (value) => {
-    props.addLog(value);
-  };
-
-  const reloadItemName = (code) => {
-    fetchItemInfomation(code).then((rawName) => {
-      const rawNameDescription = rawName.hits[0].description
-      if (rawNameDescription !== "" && rawNameDescription != null) {
-        present({
-          header: "このバーコードを登録しますか？",
-          message: `${code}`,
+  const reloadItemName = useCallback((jancode) => {
+    fetchItemInfomation(jancode).then((rawName) => {
+      const rawNameDescription = rawName.hits[0]?.description;
+      if(jancode === nowJancode) return;
+      if (rawNameDescription != null && rawNameDescription.length !== 0) {
+        registerJanCode({
+          header: 'このバーコードを登録しますか？',
+          message: `${jancode}`,
           buttons: [
-            "Cancel",
+            'Cancel',
             {
-              text: "Ok",
+              text: 'OK',
               handler: () => {
                 fetchItemFormat(rawName).then((formatName) => {
-                  addDrinkLog(formatName);
+                  addLog(formatName);
+                  setNowJancode(jancode);
                 });
-                 
               },
             },
           ],
         });
       }
     });
-  };
+  },[addLog,registerJanCode,nowJancode]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const cameraSize = Math.min(window.innerHeight, window.innerWidth);
     const config = {
-      //カメラ設定
       inputStream: {
-        name: "Live",
-        type: "LiveStream",
-        //描画するidを指定
-        target: "#preview",
-        //サイズ指定、詳細な設定ならconstraintsを作成する
+        name: 'Live',
+        type: 'LiveStream',
+        target: '#preview',
         constraints: {
           width: cameraSize,
           height: cameraSize,
-          facingMode: "environment",
+          facingMode: 'environment',
         },
         singleChannel: false,
       },
       locator: {
-        patchSize: "medium",
+        patchSize: 'medium',
         halfSample: true,
       },
-      //読み取るバーコードの種類
       decoder: {
-        readers: ["ean_reader","ean_8_reader"],
+        readers: ['ean_reader', 'ean_8_reader'],
         multiple: false,
       },
-
-      //使用可能なWebワーカー数の指定
-      numOfWorkers: navigator.hardwareConcurrency || 4,
-
+      numOfWorkers: 0,
       locate: true,
     };
 
     const onChangeQuaggaCamera = () => {
       Quagga.init(config, (err) => {
-        if (err) {
-          present({
-            header: "カメラを許可してください",
-            buttons: ["OK"],
+        if (err && !admitCamera) {
+          AlertCameraAdmitSheet({
+            header: 'カメラを許可してください',
+            buttons: ['OK'],
           });
           return;
         }
+        setAdmitCamera(true);
         Quagga.start();
       });
     };
+
+    const checkJanCodeDegit = (jancode) => {
+      const n = jancode.length;
+      if (n === 0) return false;
+      let odd = 0;
+      let even = 0;
+      for(let i = 0; i < n-1; i++){
+        if(i % 2 === 0){
+          odd += +jancode[i];
+        } else {
+          even += +jancode[i];
+        }
+      }
+      even *= 3;
+      const sum = odd + even;
+      const checkDigit = 10 - (sum % 10);
+      return checkDigit === +jancode[n - 1];
+    }
+
+    onChangeQuaggaCamera();
+
     Quagga.onDetected((result) => {
-      if (result != null) {
+      if (result != null && checkJanCodeDegit(result.codeResult.code)) {
+				//FIXME:複数回警告が表示される
         setTimeout(reloadItemName(result.codeResult.code), 1000);
       }
     });
-    onChangeQuaggaCamera();
-  }, []);
+    return () => {
+      setNowJancode("");
+      Quagga.stop();
+    };
+  }, [AlertCameraAdmitSheet, setAdmitCamera, admitCamera,reloadItemName]);
+
 
   return (
     <div>
@@ -95,4 +116,4 @@ const Scan = (props) => {
   );
 };
 
-export default Scan;
+export default Scanner;
