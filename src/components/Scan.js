@@ -1,6 +1,6 @@
 import { useIonAlert } from '@ionic/react';
 import Quagga from '@ericblade/quagga2';
-import { useCallback, useLayoutEffect,useState } from 'react';
+import { useCallback, useLayoutEffect } from 'react';
 import { fetchItemInfomation, fetchItemFormat } from '../api';
 import { AdmitCameraState } from '../recoilstates/AdmitCameraState';
 import { useRecoilState } from 'recoil';
@@ -9,12 +9,11 @@ const Scanner = ({ addLog }) => {
   const [admitCamera, setAdmitCamera] = useRecoilState(AdmitCameraState);
   const [registerJanCode] = useIonAlert();
   const [AlertCameraAdmitSheet] = useIonAlert();
-  const [nowJancode, setNowJancode] = useState("");
+
 
   const reloadItemName = useCallback((jancode) => {
     fetchItemInfomation(jancode).then((rawName) => {
       const rawNameDescription = rawName.hits[0]?.description;
-      if(jancode === nowJancode) return;
       if (rawNameDescription != null && rawNameDescription.length !== 0) {
         registerJanCode({
           header: 'このバーコードを登録しますか？',
@@ -26,7 +25,6 @@ const Scanner = ({ addLog }) => {
               handler: () => {
                 fetchItemFormat(rawName).then((formatName) => {
                   addLog(formatName);
-                  setNowJancode(jancode);
                 });
               },
             },
@@ -34,7 +32,7 @@ const Scanner = ({ addLog }) => {
         });
       }
     });
-  },[addLog,registerJanCode,nowJancode]);
+  },[addLog,registerJanCode]);
 
   useLayoutEffect(() => {
     const cameraSize = Math.min(window.innerHeight, window.innerWidth);
@@ -103,7 +101,6 @@ const Scanner = ({ addLog }) => {
       }
     });
     return () => {
-      setNowJancode("");
       Quagga.stop();
     };
   }, [AlertCameraAdmitSheet, setAdmitCamera, admitCamera,reloadItemName]);
