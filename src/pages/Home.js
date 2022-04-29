@@ -37,7 +37,7 @@ function Home() {
 
 	useIonViewWillEnter(() => {
 		if (localStorage.getItem("tasks") != null) {
-			// setTasks(JSON.parse(localStorage.getItem("tasks")));
+			setTasks(JSON.parse(localStorage.getItem("tasks")));
 		}
 	});
 
@@ -62,8 +62,7 @@ function Home() {
 		};
 		const newDrinkLogs = [...drinkLogs, newLog];
 		setDrinkLogs(newDrinkLogs);
-		// const newTasks = [];
-		const newTasks = [{ name: "ここに登録したお酒が表示されます" }];
+		const newTasks = [];
 		setTasks(newTasks);
 		localStorage.setItem("tasks", JSON.stringify(newTasks));
 		localStorage.setItem("logs", JSON.stringify(newDrinkLogs));

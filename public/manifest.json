@@ -1,9 +1,9 @@
 {
-  "short_name": "Ionic App",
-  "name": "My Ionic App",
+  "short_name": "Alchoder",
+  "name": "Alchoder:飲酒量を把握する",
   "icons": [
     {
-      "src": "assets/icon/favicon.png",
+      "src": "assets/icon/beer.png",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
