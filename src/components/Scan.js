@@ -1,16 +1,40 @@
 import { useIonAlert } from '@ionic/react';
 import Quagga from '@ericblade/quagga2';
-import { useLayoutEffect,useState } from 'react';
+import { useCallback, useLayoutEffect,useState } from 'react';
 import { fetchItemInfomation, fetchItemFormat } from '../api';
 import { AdmitCameraState } from '../recoilstates/AdmitCameraState';
 import { useRecoilState } from 'recoil';
 
-const Scan = ({ addLog }) => {
+const Scanner = ({ addLog }) => {
   const [admitCamera, setAdmitCamera] = useRecoilState(AdmitCameraState);
   const [registerJanCode] = useIonAlert();
   const [AlertCameraAdmitSheet] = useIonAlert();
-	const [checkJancode,setCheckJancode] = useState(false);
-	const [count,setcount] = useState(0);
+  const [nowJancode, setNowJancode] = useState("");
+
+  const reloadItemName = useCallback((jancode) => {
+    fetchItemInfomation(jancode).then((rawName) => {
+      const rawNameDescription = rawName.hits[0]?.description;
+      if(jancode === nowJancode) return;
+      if (rawNameDescription != null && rawNameDescription.length !== 0) {
+        registerJanCode({
+          header: 'このバーコードを登録しますか？',
+          message: `${jancode}`,
+          buttons: [
+            'Cancel',
+            {
+              text: 'OK',
+              handler: () => {
+                fetchItemFormat(rawName).then((formatName) => {
+                  addLog(formatName);
+                  setNowJancode(jancode);
+                });
+              },
+            },
+          ],
+        });
+      }
+    });
+  },[addLog,registerJanCode,nowJancode]);
 
   useLayoutEffect(() => {
     const cameraSize = Math.min(window.innerHeight, window.innerWidth);
@@ -34,9 +58,10 @@ const Scan = ({ addLog }) => {
         readers: ['ean_reader', 'ean_8_reader'],
         multiple: false,
       },
-      numOfWorkers: 4,
+      numOfWorkers: 0,
       locate: true,
     };
+
     const onChangeQuaggaCamera = () => {
       Quagga.init(config, (err) => {
         if (err && !admitCamera) {
@@ -50,45 +75,39 @@ const Scan = ({ addLog }) => {
         Quagga.start();
       });
     };
-    const reloadItemName = (code) => {
-      fetchItemInfomation(code).then((rawName) => {
-        const rawNameDescription = rawName.hits[0].description;
-        if (rawNameDescription != null && rawNameDescription.length !== 0) {
-          registerJanCode({
-            header: 'このバーコードを登録しますか？',
-            message: `${code}`,
-            buttons: [
-              'Cancel',
-              {
-                text: 'Ok',
-                handler: () => {
-                  fetchItemFormat(rawName).then((formatName) => {
-                    addLog(formatName);
-                  });
-                },
-              },
-            ],
-          });
+
+    const checkJanCodeDegit = (jancode) => {
+      const n = jancode.length;
+      if (n === 0) return false;
+      let odd = 0;
+      let even = 0;
+      for(let i = 0; i < n-1; i++){
+        if(i % 2 === 0){
+          odd += +jancode[i];
+        } else {
+          even += +jancode[i];
         }
-      });
-    };
+      }
+      even *= 3;
+      const sum = odd + even;
+      const checkDigit = 10 - (sum % 10);
+      return checkDigit === +jancode[n - 1];
+    }
 
     onChangeQuaggaCamera();
 
     Quagga.onDetected((result) => {
-      if (result != null) {
-				setcount(c => c+1);
-				//FIXME:複数回認識されるため、2回目以降の認識でバグる
-				//一度バグに集中するため、reloadItemNameを使用しない
-				//useCallbackが怪しい、特にreloadItemNameをラップすべきか？
-        // setTimeout(reloadItemName(result.codeResult.code), 1000);
-				window.alert(`code is ${result.codeResult.code} time is ${count}`);
+      if (result != null && checkJanCodeDegit(result.codeResult.code)) {
+				//FIXME:複数回警告が表示される
+        setTimeout(reloadItemName(result.codeResult.code), 1000);
       }
     });
     return () => {
+      setNowJancode("");
       Quagga.stop();
     };
-  }, [AlertCameraAdmitSheet, setAdmitCamera, addLog, registerJanCode, admitCamera,count]);
+  }, [AlertCameraAdmitSheet, setAdmitCamera, admitCamera,reloadItemName]);
+
 
   return (
     <div>
@@ -97,4 +116,4 @@ const Scan = ({ addLog }) => {
   );
 };
 
-export default Scan;
+export default Scanner;
